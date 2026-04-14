@@ -1,0 +1,30 @@
+[project]
+name = "ai-quiz-system"
+version = "0.1.0"
+description = "AI-Powered Daily Quiz System for Entain India"
+requires-python = ">=3.9"
+dependencies = [
+    "aws-cdk-lib>=2.180.0",
+    "constructs>=10.0.0",
+    "pydantic>=2.0.0",
+    "boto3>=1.36.0",
+    "slack-bolt>=1.22.0",
+    "slack-sdk>=3.34.0",
+    "botbuilder-core>=4.16.0",
+    "botbuilder-schema>=4.16.0",
+    "aws-lambda-powertools>=3.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "moto>=5.0.0",
+    "pytest-mock>=3.14.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["infra*", "shared*", "lambdas*"]
