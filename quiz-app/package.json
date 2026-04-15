@@ -1,0 +1,12 @@
+{
+  "name": "quiz-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "node-cron": "3.0.3",
+    "openai": "4.85.4"
+  }
+}

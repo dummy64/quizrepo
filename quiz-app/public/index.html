@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
+  .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+  h1 { text-align: center; margin: 20px 0; }
+  .card { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  input { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
+  button { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
+  .btn-primary { background: #4f46e5; color: #fff; }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; }
+  .btn-tab { background: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 16px; color: #666; }
+  .btn-tab.active { border-bottom-color: #4f46e5; color: #4f46e5; }
+  .timer { text-align: center; font-size: 22px; font-weight: 700; color: #4f46e5; margin: 10px 0; }
+  .question { margin-bottom: 20px; }
+  .question p { font-weight: 600; margin-bottom: 8px; }
+  .option { display: block; padding: 10px 14px; margin: 4px 0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+  .option:hover { border-color: #4f46e5; background: #eef2ff; }
+  .option.selected { border-color: #4f46e5; background: #e0e7ff; }
+  .result { text-align: center; font-size: 20px; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+  th { font-weight: 600; color: #666; font-size: 13px; text-transform: uppercase; }
+  .medal { font-size: 18px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; justify-content: center; }
+  .hidden { display: none; }
+  .progress { text-align: center; color: #666; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 Daily Quiz</h1>
+
+  <div class="tabs">
+    <button class="btn-tab active" onclick="showTab('quiz')">Quiz</button>
+    <button class="btn-tab" onclick="showTab('leaderboard')">Leaderboard</button>
+  </div>
+
+  <!-- Login -->
+  <div id="login" class="card">
+    <h2 style="margin-bottom:12px">Enter your details</h2>
+    <input id="nameInput" placeholder="Your name" />
+    <input id="emailInput" type="email" placeholder="Your email" />
+    <br><br>
+    <button class="btn-primary" onclick="startQuiz()">Start Quiz</button>
+    <p id="loginError" style="color:red;margin-top:8px"></p>
+  </div>
+
+  <!-- Quiz -->
+  <div id="quizSection" class="hidden">
+    <div class="card">
+      <div class="timer">⏱ <span id="timer">00:00</span></div>
+      <div class="progress" id="progress"></div>
+    </div>
+    <div id="questions"></div>
+    <button class="btn-primary" id="submitBtn" onclick="submitQuiz()" style="width:100%;margin-top:8px">Submit Quiz</button>
+  </div>
+
+  <!-- Result -->
+  <div id="resultSection" class="hidden">
+    <div class="card result" id="resultText"></div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard" class="hidden">
+    <div class="card">
+      <h2 style="margin-bottom:12px">🏆 Leaderboard</h2>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Avg Score</th><th>Quizzes</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let quiz = null, answers = {}, timerInterval = null, startTime = null;
+
+function showTab(tab) {
+  document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
+  ['login','quizSection','resultSection'].forEach(id => {
+    document.getElementById(id).classList.toggle('hidden', tab !== 'quiz' || document.getElementById(id).classList.contains('hidden'));
+  });
+  if (tab === 'quiz') {
+    // Show whichever quiz state is active
+    if (!quiz) { document.getElementById('login').classList.remove('hidden'); }
+  }
+  if (tab === 'leaderboard') loadLeaderboard();
+}
+
+async function startQuiz() {
+  const name = document.getElementById('nameInput').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+  if (!name || !email) { document.getElementById('loginError').textContent = 'Please fill in both fields.'; return; }
+
+  const res = await fetch('/api/quiz');
+  if (!res.ok) { document.getElementById('loginError').textContent = 'No quiz available today.'; return; }
+  quiz = await res.json();
+
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('quizSection').classList.remove('hidden');
+  document.getElementById('progress').textContent = `0 / ${quiz.total} answered`;
+
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  quiz.questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question card';
+    div.innerHTML = `<p>${i + 1}. ${q.text}</p>` +
+      Object.entries(q.options).map(([k, v]) =>
+        `<div class="option" data-q="${i}" data-opt="${k}" onclick="pick(this)">${k}: ${v}</div>`
+      ).join('');
+    container.appendChild(div);
+  });
+
+  answers = {};
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+function pick(el) {
+  const q = el.dataset.q;
+  el.parentElement.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[q] = el.dataset.opt;
+  const count = Object.keys(answers).length;
+  document.getElementById('progress').textContent = `${count} / ${quiz.total} answered`;
+}
+
+function updateTimer() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  const m = String(Math.floor(s / 60)).padStart(2, '0');
+  const sec = String(s % 60).padStart(2, '0');
+  document.getElementById('timer').textContent = `${m}:${sec}`;
+}
+
+async function submitQuiz() {
+  clearInterval(timerInterval);
+  const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+  const name = document.getElementById('nameInput').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+
+  document.getElementById('submitBtn').disabled = true;
+  const res = await fetch('/api/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, answers, date: quiz.date, timeTaken }),
+  });
+  const data = await res.json();
+
+  document.getElementById('quizSection').classList.add('hidden');
+  document.getElementById('resultSection').classList.remove('hidden');
+
+  if (res.ok) {
+    const mins = Math.floor(data.timeTaken / 60);
+    const secs = data.timeTaken % 60;
+    document.getElementById('resultText').innerHTML =
+      `You scored <span style="color:#4f46e5">${data.correct}/${data.total}</span> (${data.score}%)<br>
+       <span style="font-size:16px;color:#666">Time: ${mins}m ${secs}s</span>`;
+  } else {
+    document.getElementById('resultText').textContent = data.error;
+  }
+}
+
+async function loadLeaderboard() {
+  const res = await fetch('/api/leaderboard');
+  const lb = await res.json();
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('lbBody').innerHTML = lb.map((e, i) =>
+    `<tr><td>${medals[i] || i + 1}</td><td>${e.name}</td><td>${e.avgScore}%</td><td>${e.quizzesTaken}</td></tr>`
+  ).join('');
+}
+
+loadLeaderboard();
+</script>
+</body>
+</html>

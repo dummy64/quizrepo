@@ -6,3 +6,4 @@ cdk.out/
 *.egg-info/
 dist/
 .env
+node_modules/
