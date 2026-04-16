@@ -1,0 +1,20 @@
+[
+  {
+    "name": "asdasdfasfd",
+    "email": "asdfasdfasdfasdf@gmail.com",
+    "totalCorrect": 4,
+    "totalQuestions": 5,
+    "quizzesTaken": 1,
+    "avgScore": 80,
+    "lastPlayed": "2026-04-16"
+  },
+  {
+    "name": "asdfasdfad",
+    "email": "asdfasdfasdfasdf",
+    "totalCorrect": 3,
+    "totalQuestions": 5,
+    "quizzesTaken": 1,
+    "avgScore": 60,
+    "lastPlayed": "2026-04-16"
+  }
+]

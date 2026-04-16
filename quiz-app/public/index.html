@@ -5,181 +5,310 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Quiz</title>
 <style>
+  :root { --primary: #2563eb; --primary-hover: #1d4ed8; --green: #16a34a; --red: #dc2626; --bg: #f8fafc; --card: #fff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
-  .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-  h1 { text-align: center; margin: 20px 0; }
-  .card { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  input { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
-  button { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
-  .btn-primary { background: #4f46e5; color: #fff; }
-  .btn-primary:hover { background: #4338ca; }
-  .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; }
-  .btn-tab { background: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 16px; color: #666; }
-  .btn-tab.active { border-bottom-color: #4f46e5; color: #4f46e5; }
-  .timer { text-align: center; font-size: 22px; font-weight: 700; color: #4f46e5; margin: 10px 0; }
-  .question { margin-bottom: 20px; }
-  .question p { font-weight: 600; margin-bottom: 8px; }
-  .option { display: block; padding: 10px 14px; margin: 4px 0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-  .option:hover { border-color: #4f46e5; background: #eef2ff; }
-  .option.selected { border-color: #4f46e5; background: #e0e7ff; }
-  .result { text-align: center; font-size: 20px; font-weight: 700; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
-  th { font-weight: 600; color: #666; font-size: 13px; text-transform: uppercase; }
-  .medal { font-size: 18px; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 16px; justify-content: center; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header { background: var(--primary); color: #fff; padding: 16px 0; text-align: center; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+  .container { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
+  .tabs { display: flex; background: var(--card); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 12px; text-align: center; font-weight: 600; font-size: 14px; cursor: pointer; border: none; background: none; color: var(--muted); transition: all 0.2s; }
+  .tab.active { color: var(--primary); background: #eff6ff; box-shadow: inset 0 -2px 0 var(--primary); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; outline: none; transition: border 0.2s; }
+  .form-group input:focus { border-color: var(--primary); }
+  .btn { display: inline-block; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: #fff; width: 100%; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+  .timer-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; }
+  .timer-bar .timer { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--primary); }
+  .timer-bar .progress-text { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .question-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+  .q-number { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .q-text { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 14px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; font-size: 14px; }
+  .option:hover { border-color: #93c5fd; background: #f0f7ff; }
+  .option.selected { border-color: var(--primary); background: #eff6ff; }
+  .option-key { width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .option.selected .option-key { background: var(--primary); color: #fff; }
+  .result-card { text-align: center; padding: 40px 24px; }
+  .result-score { font-size: 64px; font-weight: 800; color: var(--primary); line-height: 1; }
+  .result-label { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .result-details { display: flex; justify-content: center; gap: 32px; margin-top: 20px; }
+  .result-stat { text-align: center; }
+  .result-stat .val { font-size: 22px; font-weight: 700; }
+  .result-stat .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; }
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+  .lb-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .lb-rank { font-weight: 700; font-size: 16px; }
+  .lb-name { font-weight: 600; }
+  .lb-email { font-size: 12px; color: var(--muted); }
+  .lb-score { font-weight: 700; color: var(--primary); }
+  .lb-empty { text-align: center; padding: 40px; color: var(--muted); }
+  .done-card { text-align: center; padding: 40px 24px; }
+  .done-card .icon { font-size: 48px; margin-bottom: 12px; }
+  .done-card p { color: var(--muted); font-size: 15px; }
   .hidden { display: none; }
-  .progress { text-align: center; color: #666; margin: 8px 0; }
+  .error { color: var(--red); font-size: 13px; margin-top: 8px; }
+  .resume-banner { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #92400e; text-align: center; }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div class="header">
   <h1>🧠 Daily Quiz</h1>
+  <p id="dateDisplay"></p>
+</div>
 
+<div class="container">
   <div class="tabs">
-    <button class="btn-tab active" onclick="showTab('quiz')">Quiz</button>
-    <button class="btn-tab" onclick="showTab('leaderboard')">Leaderboard</button>
+    <button class="tab active" onclick="showTab('quiz')">Take Quiz</button>
+    <button class="tab" onclick="showTab('leaderboard')">Leaderboard</button>
   </div>
 
-  <!-- Login -->
-  <div id="login" class="card">
-    <h2 style="margin-bottom:12px">Enter your details</h2>
-    <input id="nameInput" placeholder="Your name" />
-    <input id="emailInput" type="email" placeholder="Your email" />
-    <br><br>
-    <button class="btn-primary" onclick="startQuiz()">Start Quiz</button>
-    <p id="loginError" style="color:red;margin-top:8px"></p>
-  </div>
-
-  <!-- Quiz -->
-  <div id="quizSection" class="hidden">
+  <!-- LOGIN -->
+  <div id="loginSection">
     <div class="card">
+      <h2 style="margin-bottom:4px">Ready to play?</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:18px">5 random questions · timed · one attempt per day</p>
+      <div class="form-group">
+        <label>Name</label>
+        <input id="nameInput" placeholder="John Doe" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="emailInput" type="email" placeholder="john@example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+      <p class="error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <!-- ALREADY DONE -->
+  <div id="doneSection" class="hidden">
+    <div class="card done-card">
+      <div class="icon">✅</div>
+      <h2>You've already taken today's quiz!</h2>
+      <p>Come back tomorrow for a new one.</p>
+      <br>
+      <button class="btn btn-primary" onclick="showTab('leaderboard')" style="width:auto;padding:10px 24px">View Leaderboard →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizSection" class="hidden">
+    <div id="resumeBanner" class="resume-banner hidden">⚡ Resuming your quiz — timer continues from where you left off</div>
+    <div class="timer-bar">
+      <div><span class="progress-text" id="progressText">0 / 5 answered</span></div>
       <div class="timer">⏱ <span id="timer">00:00</span></div>
-      <div class="progress" id="progress"></div>
     </div>
     <div id="questions"></div>
-    <button class="btn-primary" id="submitBtn" onclick="submitQuiz()" style="width:100%;margin-top:8px">Submit Quiz</button>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
   </div>
 
-  <!-- Result -->
+  <!-- RESULT -->
   <div id="resultSection" class="hidden">
-    <div class="card result" id="resultText"></div>
+    <div class="card result-card">
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-label">Score</div>
+      <div class="result-details">
+        <div class="result-stat"><div class="val" id="resultCorrect"></div><div class="lbl">Correct</div></div>
+        <div class="result-stat"><div class="val" id="resultTime"></div><div class="lbl">Time</div></div>
+      </div>
+      <br>
+      <button class="btn btn-primary" onclick="showTab('leaderboard')" style="width:auto;padding:10px 24px">View Leaderboard →</button>
+    </div>
   </div>
 
-  <!-- Leaderboard -->
-  <div id="leaderboard" class="hidden">
-    <div class="card">
-      <h2 style="margin-bottom:12px">🏆 Leaderboard</h2>
-      <table>
-        <thead><tr><th>#</th><th>Name</th><th>Avg Score</th><th>Quizzes</th></tr></thead>
-        <tbody id="lbBody"></tbody>
-      </table>
+  <!-- LEADERBOARD -->
+  <div id="leaderboardSection" class="hidden">
+    <div class="card" style="padding:16px">
+      <h2 style="margin-bottom:14px">🏆 Leaderboard</h2>
+      <div id="lbContent"></div>
     </div>
   </div>
 </div>
 
 <script>
-let quiz = null, answers = {}, timerInterval = null, startTime = null;
+const SESSION_KEY = 'quiz_session';
+let quiz = null, answers = {}, timerInterval = null, serverStartedAt = null;
+
+const today = new Date().toISOString().slice(0, 10);
+document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// --- Session helpers ---
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch { return null; }
+}
+function saveSession(data) { sessionStorage.setItem(SESSION_KEY, JSON.stringify(data)); }
+function clearSession() { sessionStorage.removeItem(SESSION_KEY); }
+
+// --- View management ---
+const views = ['loginSection', 'doneSection', 'quizSection', 'resultSection', 'leaderboardSection'];
+function showView(id) { views.forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id)); }
 
 function showTab(tab) {
-  document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
-  ['login','quizSection','resultSection'].forEach(id => {
-    document.getElementById(id).classList.toggle('hidden', tab !== 'quiz' || document.getElementById(id).classList.contains('hidden'));
-  });
-  if (tab === 'quiz') {
-    // Show whichever quiz state is active
-    if (!quiz) { document.getElementById('login').classList.remove('hidden'); }
-  }
-  if (tab === 'leaderboard') loadLeaderboard();
+  document.querySelectorAll('.tab').forEach((b, i) => b.classList.toggle('active', (tab === 'quiz' && i === 0) || (tab === 'leaderboard' && i === 1)));
+  if (tab === 'leaderboard') { showView('leaderboardSection'); loadLeaderboard(); return; }
+  // Quiz tab — figure out which state to show
+  const session = getSession();
+  if (session && session.submitted) showView('doneSection');
+  else if (session && session.questions) showView('quizSection');
+  else showView('loginSection');
 }
 
+// --- Timer ---
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - new Date(serverStartedAt).getTime()) / 1000);
+    document.getElementById('timer').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }, 1000);
+}
+
+// --- Render questions ---
+function renderQuestions(questions, savedAnswers) {
+  answers = savedAnswers || {};
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.innerHTML =
+      `<div class="q-number">Question ${i + 1} of ${questions.length}</div>` +
+      `<div class="q-text">${q.text}</div>` +
+      `<div class="options">` +
+      Object.entries(q.options).map(([k, v]) =>
+        `<div class="option${answers[String(q.id)] === k ? ' selected' : ''}" data-q="${q.id}" data-opt="${k}" onclick="pick(this)">
+          <span class="option-key">${k}</span><span>${v}</span>
+        </div>`
+      ).join('') + `</div>`;
+    container.appendChild(div);
+  });
+  document.getElementById('progressText').textContent = `${Object.keys(answers).length} / ${questions.length} answered`;
+}
+
+// --- Start quiz ---
 async function startQuiz() {
   const name = document.getElementById('nameInput').value.trim();
   const email = document.getElementById('emailInput').value.trim();
-  if (!name || !email) { document.getElementById('loginError').textContent = 'Please fill in both fields.'; return; }
+  const errEl = document.getElementById('loginError');
+  errEl.classList.add('hidden');
+  if (!name || !email) { errEl.textContent = 'Please fill in both fields.'; errEl.classList.remove('hidden'); return; }
 
-  const res = await fetch('/api/quiz');
-  if (!res.ok) { document.getElementById('loginError').textContent = 'No quiz available today.'; return; }
-  quiz = await res.json();
-
-  document.getElementById('login').classList.add('hidden');
-  document.getElementById('quizSection').classList.remove('hidden');
-  document.getElementById('progress').textContent = `0 / ${quiz.total} answered`;
-
-  const container = document.getElementById('questions');
-  container.innerHTML = '';
-  quiz.questions.forEach((q, i) => {
-    const div = document.createElement('div');
-    div.className = 'question card';
-    div.innerHTML = `<p>${i + 1}. ${q.text}</p>` +
-      Object.entries(q.options).map(([k, v]) =>
-        `<div class="option" data-q="${i}" data-opt="${k}" onclick="pick(this)">${k}: ${v}</div>`
-      ).join('');
-    container.appendChild(div);
-  });
-
-  answers = {};
-  startTime = Date.now();
-  timerInterval = setInterval(updateTimer, 1000);
-}
-
-function pick(el) {
-  const q = el.dataset.q;
-  el.parentElement.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[q] = el.dataset.opt;
-  const count = Object.keys(answers).length;
-  document.getElementById('progress').textContent = `${count} / ${quiz.total} answered`;
-}
-
-function updateTimer() {
-  const s = Math.floor((Date.now() - startTime) / 1000);
-  const m = String(Math.floor(s / 60)).padStart(2, '0');
-  const sec = String(s % 60).padStart(2, '0');
-  document.getElementById('timer').textContent = `${m}:${sec}`;
-}
-
-async function submitQuiz() {
-  clearInterval(timerInterval);
-  const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-  const name = document.getElementById('nameInput').value.trim();
-  const email = document.getElementById('emailInput').value.trim();
-
-  document.getElementById('submitBtn').disabled = true;
-  const res = await fetch('/api/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, answers, date: quiz.date, timeTaken }),
+  const res = await fetch('/api/start', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email }),
   });
   const data = await res.json();
 
-  document.getElementById('quizSection').classList.add('hidden');
-  document.getElementById('resultSection').classList.remove('hidden');
+  if (!res.ok) {
+    if (data.error === 'already_submitted') {
+      saveSession({ date: today, email, submitted: true });
+      showView('doneSection');
+    } else {
+      errEl.textContent = data.message || data.error; errEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  quiz = data;
+  serverStartedAt = data.startedAt;
+  saveSession({ date: today, name, email, questions: data.questions, startedAt: data.startedAt, answers: {} });
+
+  if (data.resumed) document.getElementById('resumeBanner').classList.remove('hidden');
+  showView('quizSection');
+  renderQuestions(data.questions, {});
+  startTimer();
+}
+
+// --- Pick answer ---
+function pick(el) {
+  const qId = el.dataset.q;
+  el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[qId] = el.dataset.opt;
+
+  // Persist to session
+  const session = getSession();
+  if (session) { session.answers = answers; saveSession(session); }
+
+  const total = getSession()?.questions?.length || 5;
+  document.getElementById('progressText').textContent = `${Object.keys(answers).length} / ${total} answered`;
+}
+
+// --- Submit ---
+async function submitQuiz() {
+  clearInterval(timerInterval);
+  const session = getSession();
+  if (!session) return;
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Submitting...';
+
+  const res = await fetch('/api/submit', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: session.email, answers, date: today }),
+  });
+  const data = await res.json();
+
+  saveSession({ date: today, email: session.email, submitted: true });
 
   if (res.ok) {
-    const mins = Math.floor(data.timeTaken / 60);
-    const secs = data.timeTaken % 60;
-    document.getElementById('resultText').innerHTML =
-      `You scored <span style="color:#4f46e5">${data.correct}/${data.total}</span> (${data.score}%)<br>
-       <span style="font-size:16px;color:#666">Time: ${mins}m ${secs}s</span>`;
+    document.getElementById('resultScore').textContent = `${data.score}%`;
+    document.getElementById('resultCorrect').textContent = `${data.correct}/${data.total}`;
+    const m = Math.floor(data.timeTaken / 60), s = data.timeTaken % 60;
+    document.getElementById('resultTime').textContent = m > 0 ? `${m}m ${s}s` : `${s}s`;
+    showView('resultSection');
   } else {
-    document.getElementById('resultText').textContent = data.error;
+    if (data.error === 'already_submitted') showView('doneSection');
+    else { document.getElementById('resultScore').textContent = '—'; document.getElementById('resultCorrect').textContent = data.error || data.message; showView('resultSection'); }
   }
 }
 
+// --- Leaderboard ---
 async function loadLeaderboard() {
   const res = await fetch('/api/leaderboard');
   const lb = await res.json();
-  const medals = ['🥇','🥈','🥉'];
-  document.getElementById('lbBody').innerHTML = lb.map((e, i) =>
-    `<tr><td>${medals[i] || i + 1}</td><td>${e.name}</td><td>${e.avgScore}%</td><td>${e.quizzesTaken}</td></tr>`
-  ).join('');
+  const el = document.getElementById('lbContent');
+  if (!lb.length) { el.innerHTML = '<div class="lb-empty">No one has played yet. Be the first!</div>'; return; }
+  const medals = ['🥇', '🥈', '🥉'];
+  el.innerHTML =
+    `<table class="lb-table"><thead><tr><th>#</th><th>Player</th><th>Avg</th><th>Played</th></tr></thead><tbody>` +
+    lb.map((e, i) =>
+      `<tr><td class="lb-rank">${medals[i] || (i + 1)}</td><td><div class="lb-name">${e.name}</div><div class="lb-email">${e.email}</div></td><td class="lb-score">${e.avgScore}%</td><td>${e.quizzesTaken}</td></tr>`
+    ).join('') + `</tbody></table>`;
 }
 
-loadLeaderboard();
+// --- Init: check for existing session ---
+(function init() {
+  const session = getSession();
+  if (session && session.date === today) {
+    if (session.submitted) {
+      showView('doneSection');
+    } else if (session.questions) {
+      // Resume in-progress quiz
+      quiz = session;
+      serverStartedAt = session.startedAt;
+      document.getElementById('nameInput').value = session.name;
+      document.getElementById('emailInput').value = session.email;
+      document.getElementById('resumeBanner').classList.remove('hidden');
+      showView('quizSection');
+      renderQuestions(session.questions, session.answers || {});
+      startTimer();
+    }
+  } else {
+    clearSession(); // stale session from a different day
+  }
+  loadLeaderboard();
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,406 @@
+{
+  "date": "2026-04-16",
+  "topic": "general knowledge and tech trivia",
+  "questions": [
+    {
+      "text": "What is the capital of France?",
+      "options": {
+        "A": "Berlin",
+        "B": "Madrid",
+        "C": "Paris",
+        "D": "Rome"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which planet is known as the Red Planet?",
+      "options": {
+        "A": "Earth",
+        "B": "Mars",
+        "C": "Jupiter",
+        "D": "Saturn"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the largest mammal in the world?",
+      "options": {
+        "A": "African Elephant",
+        "B": "Blue Whale",
+        "C": "Giraffe",
+        "D": "Orca"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "Which company developed the iPhone?",
+      "options": {
+        "A": "Samsung",
+        "B": "Apple",
+        "C": "Nokia",
+        "D": "Sony"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "In what year did the Titanic sink?",
+      "options": {
+        "A": "1912",
+        "B": "1905",
+        "C": "1915",
+        "D": "1920"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "What is the main ingredient in guacamole?",
+      "options": {
+        "A": "Tomato",
+        "B": "Avocado",
+        "C": "Pepper",
+        "D": "Onion"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "Which element has the chemical symbol O?",
+      "options": {
+        "A": "Gold",
+        "B": "Oxygen",
+        "C": "Silver",
+        "D": "Iron"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What does CPU stand for in computing?",
+      "options": {
+        "A": "Central Processing Unit",
+        "B": "Computer Personal Unit",
+        "C": "Central Performance Unit",
+        "D": "Computing Power Unit"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "Who wrote 'Romeo and Juliet'?",
+      "options": {
+        "A": "Charles Dickens",
+        "B": "Mark Twain",
+        "C": "William Shakespeare",
+        "D": "Ernest Hemingway"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which gas do plants absorb from the atmosphere?",
+      "options": {
+        "A": "Oxygen",
+        "B": "Carbon Dioxide",
+        "C": "Nitrogen",
+        "D": "Hydrogen"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "In which year did the first man land on the moon?",
+      "options": {
+        "A": "1965",
+        "B": "1969",
+        "C": "1971",
+        "D": "1973"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the primary function of RAM in a computer?",
+      "options": {
+        "A": "Store data permanently",
+        "B": "Process data",
+        "C": "Store data temporarily",
+        "D": "Manage power supply"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which is the largest continent?",
+      "options": {
+        "A": "Africa",
+        "B": "Asia",
+        "C": "North America",
+        "D": "Europe"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What does HTML stand for?",
+      "options": {
+        "A": "HyperText Markup Language",
+        "B": "HighText Machine Language",
+        "C": "HyperTool Multi Language",
+        "D": "HyperText Marking Language"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "Which planet is known for its rings?",
+      "options": {
+        "A": "Mars",
+        "B": "Jupiter",
+        "C": "Saturn",
+        "D": "Uranus"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What is the most widely spoken language in the world?",
+      "options": {
+        "A": "Spanish",
+        "B": "English",
+        "C": "Mandarin Chinese",
+        "D": "Hindi"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What is the name of the first artificial Earth satellite?",
+      "options": {
+        "A": "Apollo",
+        "B": "Vostok",
+        "C": "Sputnik",
+        "D": "Explorer"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What is the powerhouse of the cell?",
+      "options": {
+        "A": "Nucleus",
+        "B": "Ribosome",
+        "C": "Mitochondria",
+        "D": "Endoplasmic Reticulum"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which programming language is primarily used for web development?",
+      "options": {
+        "A": "Python",
+        "B": "Java",
+        "C": "JavaScript",
+        "D": "C++"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which is the smallest planet in our solar system?",
+      "options": {
+        "A": "Mars",
+        "B": "Mercury",
+        "C": "Venus",
+        "D": "Pluto"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the square root of 64?",
+      "options": {
+        "A": "6",
+        "B": "7",
+        "C": "8",
+        "D": "9"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which social media platform is known for its 280-character limit?",
+      "options": {
+        "A": "Instagram",
+        "B": "Facebook",
+        "C": "Twitter",
+        "D": "Snapchat"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What is the chemical formula for water?",
+      "options": {
+        "A": "H2O",
+        "B": "CO2",
+        "C": "O2",
+        "D": "H2"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "Which country is known as the Land of the Rising Sun?",
+      "options": {
+        "A": "China",
+        "B": "India",
+        "C": "Japan",
+        "D": "Thailand"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which company is known for its search engine?",
+      "options": {
+        "A": "Microsoft",
+        "B": "Google",
+        "C": "Apple",
+        "D": "Amazon"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the currency of the United Kingdom?",
+      "options": {
+        "A": "Dollar",
+        "B": "Euro",
+        "C": "Pound Sterling",
+        "D": "Yen"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which device is used to measure temperature?",
+      "options": {
+        "A": "Barometer",
+        "B": "Thermometer",
+        "C": "Hygrometer",
+        "D": "Anemometer"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the primary function of a router?",
+      "options": {
+        "A": "Store data",
+        "B": "Connect multiple networks",
+        "C": "Scan for viruses",
+        "D": "Process requests"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "Who painted the Mona Lisa?",
+      "options": {
+        "A": "Vincent van Gogh",
+        "B": "Pablo Picasso",
+        "C": "Leonardo da Vinci",
+        "D": "Claude Monet"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What type of animal is a dolphin?",
+      "options": {
+        "A": "Fish",
+        "B": "Mammal",
+        "C": "Reptile",
+        "D": "Amphibian"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the default port for HTTP?",
+      "options": {
+        "A": "21",
+        "B": "25",
+        "C": "80",
+        "D": "443"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which vitamin is known as the 'sunshine vitamin'?",
+      "options": {
+        "A": "Vitamin A",
+        "B": "Vitamin B12",
+        "C": "Vitamin C",
+        "D": "Vitamin D"
+      },
+      "correct": "D"
+    },
+    {
+      "text": "Who is known as the father of modern physics?",
+      "options": {
+        "A": "Isaac Newton",
+        "B": "Albert Einstein",
+        "C": "Galileo Galilei",
+        "D": "Niels Bohr"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "Which is the largest ocean on Earth?",
+      "options": {
+        "A": "Atlantic Ocean",
+        "B": "Indian Ocean",
+        "C": "Arctic Ocean",
+        "D": "Pacific Ocean"
+      },
+      "correct": "D"
+    },
+    {
+      "text": "What year was Facebook founded?",
+      "options": {
+        "A": "2004",
+        "B": "2005",
+        "C": "2006",
+        "D": "2007"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "What does VPN stand for?",
+      "options": {
+        "A": "Virtual Private Network",
+        "B": "Virtual Public Network",
+        "C": "Variable Private Network",
+        "D": "Virtual Protected Network"
+      },
+      "correct": "A"
+    },
+    {
+      "text": "Which famous scientist developed the theory of evolution?",
+      "options": {
+        "A": "Isaac Newton",
+        "B": "Charles Darwin",
+        "C": "Albert Einstein",
+        "D": "Nikola Tesla"
+      },
+      "correct": "B"
+    },
+    {
+      "text": "What is the most popular operating system for desktop computers?",
+      "options": {
+        "A": "Linux",
+        "B": "macOS",
+        "C": "Windows",
+        "D": "Unix"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "Which organ is responsible for pumping blood in the human body?",
+      "options": {
+        "A": "Liver",
+        "B": "Lung",
+        "C": "Heart",
+        "D": "Kidney"
+      },
+      "correct": "C"
+    },
+    {
+      "text": "What is the speed of light in a vacuum?",
+      "options": {
+        "A": "300,000 km/s",
+        "B": "150,000 km/s",
+        "C": "1,000 km/s",
+        "D": "3,000 km/s"
+      },
+      "correct": "A"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "asdfasdfad",
+    "email": "asdfasdfasdfasdf",
+    "correct": 3,
+    "total": 5,
+    "score": 60,
+    "timeTaken": 36,
+    "submittedAt": "2026-04-16T03:46:42.297Z"
+  },
+  {
+    "name": "asdasdfasfd",
+    "email": "asdfasdfasdfasdf@gmail.com",
+    "correct": 4,
+    "total": 5,
+    "score": 80,
+    "timeTaken": 24,
+    "submittedAt": "2026-04-16T03:52:38.488Z"
+  }
+]
