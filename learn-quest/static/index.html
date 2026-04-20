@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnQuest</title>
+<style>
+:root{--p:#6366f1;--ph:#4f46e5;--g:#10b981;--r:#ef4444;--y:#f59e0b;--bg:#0f172a;--card:#1e293b;--card2:#334155;--bdr:#475569;--txt:#f1f5f9;--mut:#94a3b8;--xp:#a78bfa;--glow:0 0 20px rgba(99,102,241,.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* Animated background */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(168,85,247,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.hdr{background:linear-gradient(135deg,#4f46e5,#7c3aed,#ec4899);padding:16px 0;text-align:center;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:shimmer 3s infinite}
+@keyframes shimmer{to{transform:translateX(50%)}}
+.hdr h1{font-size:24px;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.3)}.hdr small{opacity:.8;font-size:12px}
+
+.wrap{max-width:700px;margin:0 auto;padding:16px;position:relative;z-index:1}
+.tabs{display:flex;background:var(--card);border-radius:12px;border:1px solid var(--bdr);overflow:hidden;margin-bottom:16px;backdrop-filter:blur(10px)}
+.tab{flex:1;padding:11px;text-align:center;font-weight:600;font-size:13px;cursor:pointer;border:none;background:none;color:var(--mut);transition:.3s}
+.tab.active{color:#fff;background:linear-gradient(135deg,var(--p),#7c3aed);box-shadow:var(--glow)}
+.tab:hover:not(.active){color:var(--txt);background:var(--card2)}
+
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin-bottom:14px;backdrop-filter:blur(10px);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:14px;outline:none;background:var(--card2);color:var(--txt);transition:border .2s,box-shadow .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.2)}
+
+.btn{padding:11px 24px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+.btn-p{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;box-shadow:0 4px 15px rgba(99,102,241,.4)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(99,102,241,.5)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-p::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:.5s}
+.btn-p:hover::after{left:100%}
+.btn-s{background:var(--card2);color:var(--txt);border:1px solid var(--bdr)}.btn-s:hover{background:var(--bdr)}
+
+.hidden{display:none!important}
+.err{color:var(--r);font-size:13px;margin-top:6px}
+
+/* Dashboard */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.dash-stat{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.dash-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+.dash-stat:nth-child(1)::before{background:linear-gradient(90deg,#6366f1,#a78bfa)}
+.dash-stat:nth-child(2)::before{background:linear-gradient(90deg,#10b981,#34d399)}
+.dash-stat:nth-child(3)::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.dash-stat .val{font-size:30px;font-weight:800;line-height:1;background:linear-gradient(135deg,#fff,#cbd5e1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.dash-stat .lbl{font-size:11px;color:var(--mut);text-transform:uppercase;margin-top:4px;letter-spacing:.5px}
+
+.xp-bar-wrap{background:var(--card2);border-radius:20px;height:14px;overflow:hidden;margin:8px 0;border:1px solid var(--bdr)}
+.xp-bar{background:linear-gradient(90deg,#6366f1,#a78bfa,#c084fc);height:100%;border-radius:20px;transition:width .8s ease;position:relative}
+.xp-bar::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:xpShine 2s infinite}
+@keyframes xpShine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.streak-fire{color:#f59e0b;font-weight:800}
+
+/* Timer */
+.timer-bar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--bdr);border-radius:12px;padding:12px 18px;margin-bottom:14px}
+.timer{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,#6366f1,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.prog-text{font-size:12px;color:var(--mut);font-weight:600}
+
+/* Flash Card Style Questions */
+.qcard{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--bdr);border-radius:16px;padding:22px;margin-bottom:12px;position:relative;overflow:hidden;animation:cardIn .4s ease backwards}
+.qcard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#6366f1,#8b5cf6,#a78bfa)}
+.qcard:nth-child(2){animation-delay:.1s}.qcard:nth-child(3){animation-delay:.2s}.qcard:nth-child(4){animation-delay:.3s}.qcard:nth-child(5){animation-delay:.4s}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.qnum{font-size:11px;font-weight:700;color:var(--xp);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.qtxt{font-size:15px;font-weight:600;line-height:1.6;margin-bottom:14px;color:#fff}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:2px solid var(--bdr);border-radius:10px;cursor:pointer;transition:.2s;font-size:13px;background:var(--card2)}
+.opt:hover{border-color:var(--p);background:rgba(99,102,241,.1);transform:translateX(4px)}
+.opt.sel{border-color:var(--p);background:rgba(99,102,241,.2);box-shadow:0 0 15px rgba(99,102,241,.2)}
+.opt-k{width:28px;height:28px;border-radius:50%;background:var(--bdr);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--mut);flex-shrink:0;transition:.2s}
+.opt.sel .opt-k{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 0 10px rgba(99,102,241,.5)}
+
+/* Result */
+.res-card{text-align:center;padding:36px 22px;position:relative;overflow:hidden}
+.res-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(99,102,241,.05),transparent,rgba(168,85,247,.05),transparent);animation:spin 10s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.res-score{font-size:64px;font-weight:900;background:linear-gradient(135deg,#6366f1,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;position:relative;animation:scoreIn .6s ease}
+@keyframes scoreIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.res-lbl{font-size:13px;color:var(--mut);margin-top:4px}
+.res-row{display:flex;justify-content:center;gap:28px;margin-top:18px}
+.res-stat{text-align:center}.res-stat .v{font-size:20px;font-weight:700;color:#fff}.res-stat .l{font-size:11px;color:var(--mut);text-transform:uppercase}
+
+.xp-gain{display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:8px 20px;border-radius:24px;font-weight:800;font-size:16px;margin-top:14px;box-shadow:0 4px 20px rgba(99,102,241,.4);animation:xpPop .5s ease .3s backwards}
+@keyframes xpPop{from{transform:scale(0) rotate(-10deg)}to{transform:scale(1) rotate(0)}}
+
+.badge-pop{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1e293b;border-radius:10px;padding:8px 14px;margin:4px;font-size:13px;font-weight:700;animation:badgePop .4s ease .5s backwards;box-shadow:0 4px 15px rgba(245,158,11,.3)}
+@keyframes badgePop{from{transform:scale(0) rotate(10deg)}to{transform:scale(1) rotate(0)}}
+
+.lvl-up{background:linear-gradient(135deg,#f59e0b,#ef4444,#ec4899);color:#fff;padding:10px 22px;border-radius:12px;font-weight:800;font-size:16px;margin-top:12px;display:inline-block;animation:lvlUp .6s ease .4s backwards;box-shadow:0 4px 20px rgba(239,68,68,.4)}
+@keyframes lvlUp{from{transform:translateY(20px) scale(0)}to{transform:translateY(0) scale(1)}}
+
+/* Leaderboard */
+.lb-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.lb-tab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--card2);color:var(--mut);transition:.2s}
+.lb-tab.active{background:linear-gradient(135deg,var(--p),#7c3aed);color:#fff;border-color:var(--p);box-shadow:var(--glow)}
+.lb-tab:hover:not(.active){border-color:var(--p);color:var(--txt)}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);font-weight:700;padding:8px 10px;text-align:left;border-bottom:1px solid var(--bdr)}
+td{padding:10px;border-bottom:1px solid rgba(71,85,105,.3);font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(99,102,241,.05)}
+.rank{font-weight:700;font-size:16px}
+.pname{font-weight:600;color:#fff}.pemail{font-size:11px;color:var(--mut)}
+.pxp{font-weight:700;color:var(--xp)}
+
+/* Profile */
+.badge-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.badge{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:10px 14px;font-size:13px;transition:.2s}
+.badge:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.badge .icon{font-size:22px}.badge .bname{font-weight:600;color:#fff}.badge .bdesc{font-size:11px;color:var(--mut)}
+.badge.locked{opacity:.25;filter:grayscale(1)}
+
+/* Admin */
+.admin-stat{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.astat{background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center}
+.astat .v{font-size:24px;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.astat .l{font-size:11px;color:var(--mut);text-transform:uppercase;margin-top:2px}
+
+.empty{text-align:center;padding:30px;color:var(--mut)}
+.resume-banner{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.05));border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#fbbf24;text-align:center}
+
+/* Confetti animation for results */
+.confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti span{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall 3s linear forwards}
+@keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Pulse animation for quiz available */
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.4)}50%{box-shadow:0 0 0 10px rgba(99,102,241,0)}}
+</style>
+</head>
+<body>
+<div class="hdr"><h1>🎮 LearnQuest</h1><small id="dateDisp"></small></div>
+<div class="wrap">
+<div class="tabs">
+  <button class="tab active" data-tab="home" onclick="switchTab('home')">🏠 Home</button>
+  <button class="tab" data-tab="lb" onclick="switchTab('lb')">🏆 Ranks</button>
+  <button class="tab" data-tab="profile" onclick="switchTab('profile')">👤 Profile</button>
+  <button class="tab" data-tab="admin" onclick="switchTab('admin')">⚙️ Admin</button>
+</div>
+<div id="v-login"></div>
+<div id="v-dash" class="hidden"></div>
+<div id="v-quiz" class="hidden"></div>
+<div id="v-result" class="hidden"></div>
+<div id="v-done" class="hidden"></div>
+<div id="v-lb" class="hidden"></div>
+<div id="v-profile" class="hidden"></div>
+<div id="v-admin" class="hidden"></div>
+</div>
+</body>
+</html>
+<script>
+let user=null,quiz=null,answers={},timerInt=null,teams=[];
+const S=k=>sessionStorage.getItem(k),SS=(k,v)=>sessionStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v)),SR=k=>sessionStorage.removeItem(k);
+const $=id=>document.getElementById(id);
+const today=new Date().toISOString().slice(0,10);
+$('dateDisp').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const LEVELS=[0,100,300,600,1000,1500,2200,3000,4000,5500,7500,10000];
+function xpForNext(lv){return LEVELS[lv]||10000}
+function xpProgress(xp,lv){const c=LEVELS[lv-1]||0,n=LEVELS[lv]||10000;return Math.min(100,Math.round((xp-c)/(n-c)*100))}
+async function api(p,o){const r=await fetch(p,o);const d=await r.json().catch(()=>({}));if(!r.ok)throw{status:r.status,...d};return d}
+function post(p,b){return api(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})}
+const views=['v-login','v-dash','v-quiz','v-result','v-done','v-lb','v-profile','v-admin'];
+function show(id){views.forEach(v=>$(v).classList.toggle('hidden',v!==id))}
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  if(tab==='home'){if(!user){show('v-login');return}const ss=S('quiz_state');if(ss==='done')show('v-done');else if(ss==='active')show('v-quiz');else show('v-dash')}
+  else if(tab==='lb'){show('v-lb');loadLB()}
+  else if(tab==='profile'){show('v-profile');loadProfile()}
+  else if(tab==='admin'){show('v-admin');loadAdmin()}
+}
+function confetti(){const c=document.createElement('div');c.className='confetti';const colors=['#6366f1','#ec4899','#f59e0b','#10b981','#8b5cf6'];for(let i=0;i<50;i++){const s=document.createElement('span');s.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[i%5]};animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;transform:rotate(${Math.random()*360}deg)`;c.appendChild(s)}document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
+
+async function loadTeams(){teams=await api('/api/teams')}
+function renderLogin(){
+  $('v-login').innerHTML=`<div class="card" style="text-align:center;padding:32px">
+    <div style="font-size:48px;margin-bottom:8px">🎮</div>
+    <h2 style="margin-bottom:4px;font-size:22px">Welcome to LearnQuest</h2>
+    <p style="color:var(--mut);font-size:13px;margin-bottom:20px">Daily quizzes · XP & levels · Team battles · Badges</p>
+    <div class="fg" style="text-align:left"><label>Name</label><input id="regName" placeholder="Your name"/></div>
+    <div class="fg" style="text-align:left"><label>Email</label><input id="regEmail" type="email" placeholder="you@company.com"/></div>
+    <div class="fg" style="text-align:left"><label>Team</label><select id="regTeam">${teams.map(t=>`<option value="${t.id}">${t.name} (${t.member_count} members)</option>`).join('')}</select></div>
+    <button class="btn btn-p" onclick="doLogin()">⚡ Start Learning</button>
+    <p class="err hidden" id="loginErr"></p>
+  </div>`;
+}
+async function doLogin(){
+  const name=$('regName').value.trim(),email=$('regEmail').value.trim(),team_id=+$('regTeam').value;
+  const e=$('loginErr');e.classList.add('hidden');
+  if(!name||!email){e.textContent='Fill in all fields.';e.classList.remove('hidden');return}
+  try{try{await post('/api/register',{name,email,team_id})}catch(x){if(x.status!==409)throw x}
+  user=await api(`/api/profile/${encodeURIComponent(email)}`);SS('user_email',email);renderDash();show('v-dash')}
+  catch(x){e.textContent=x.detail||x.message||'Error';e.classList.remove('hidden')}
+}
+function renderDash(){
+  const pct=xpProgress(user.xp,user.level);
+  $('v-dash').innerHTML=`
+    <div class="dash-grid">
+      <div class="dash-stat"><div class="val">${user.xp}</div><div class="lbl">Total XP</div></div>
+      <div class="dash-stat"><div class="val">Lv${user.level}</div><div class="lbl">Level</div></div>
+      <div class="dash-stat"><div class="val">${user.streak}🔥</div><div class="lbl">Streak</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut);font-weight:600"><span>Level ${user.level}</span><span>${user.xp} / ${xpForNext(user.level)} XP</span></div>
+      <div class="xp-bar-wrap"><div class="xp-bar" style="width:${pct}%"></div></div>
+    </div>
+    <div class="card pulse" id="quizCard"><p style="color:var(--mut)">Loading...</p></div>
+    ${user.badges.length?`<div class="card"><h3 style="margin-bottom:10px">🏅 Recent Badges</h3><div class="badge-grid">${user.badges.slice(-4).map(b=>`<div class="badge"><span class="icon">${b.icon}</span><span class="bname">${b.name}</span></div>`).join('')}</div></div>`:''}`;
+  loadQuizCard();
+}
+async function loadQuizCard(){
+  try{const i=await api('/api/quiz/today');
+  if(!i.available){$('quizCard').innerHTML=`<div class="empty">🌙 No quiz today. Check back tomorrow!</div>`;return}
+  $('quizCard').innerHTML=`<div style="display:flex;align-items:center;gap:14px">
+    <div style="font-size:40px">📝</div>
+    <div style="flex:1"><h3 style="color:#fff">Today's Challenge</h3><p style="color:var(--mut);font-size:13px;margin:2px 0 10px">Topic: <strong style="color:var(--xp)">${i.topic}</strong> · 5 questions</p>
+    <button class="btn btn-p" onclick="startQuiz()" style="width:auto;padding:10px 28px">⚡ Take Quiz</button></div></div>`}
+  catch(e){$('quizCard').innerHTML=`<div class="empty">${e.message||'Error'}</div>`}
+}
+async function startQuiz(){
+  try{const d=await post('/api/quiz/start',{email:user.email});quiz=d;answers={};
+  SS('quiz_state','active');SS('quiz_data',d);SS('quiz_answers',{});
+  renderQuiz(d.resumed);show('v-quiz')}
+  catch(e){if(e.error==='already_submitted'){SS('quiz_state','done');renderDone();show('v-done')}else alert(e.detail||e.message||'Error')}
+}
+function renderQuiz(resumed){
+  const sa=resumed?JSON.parse(S('quiz_answers')||'{}'):{};answers=sa;
+  $('v-quiz').innerHTML=`
+    ${resumed?'<div class="resume-banner">⚡ Resuming — timer continues from where you left off</div>':''}
+    <div class="timer-bar"><div><span class="prog-text" id="progTxt">0 / ${quiz.questions.length} answered</span></div><div class="timer">⏱ <span id="tmr">00:00</span></div></div>
+    <div id="qList">${quiz.questions.map((q,i)=>`<div class="qcard"><div class="qnum">Question ${i+1} of ${quiz.questions.length}</div><div class="qtxt">${q.text}</div><div class="opts">${Object.entries(q.options).map(([k,v])=>`<div class="opt${sa[String(q.id)]===k?' sel':''}" data-q="${q.id}" data-o="${k}" onclick="pick(this)"><span class="opt-k">${k}</span><span>${v}</span></div>`).join('')}</div></div>`).join('')}</div>
+    <button class="btn btn-p" id="subBtn" onclick="submitQuiz()">🚀 Submit Quiz</button>`;
+  updateProg();clearInterval(timerInt);
+  timerInt=setInterval(()=>{const st=quiz.started_at.endsWith('Z')?quiz.started_at:quiz.started_at+'Z';const s=Math.floor((Date.now()-new Date(st).getTime())/1000);$('tmr').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+}
+function pick(el){el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');answers[el.dataset.q]=el.dataset.o;SS('quiz_answers',answers);updateProg()}
+function updateProg(){if($('progTxt'))$('progTxt').textContent=`${Object.keys(answers).length} / ${quiz.questions.length} answered`}
+async function submitQuiz(){
+  clearInterval(timerInt);$('subBtn').disabled=true;$('subBtn').textContent='Submitting...';
+  try{const r=await post('/api/quiz/submit',{email:user.email,quiz_id:quiz.quiz_id,answers});
+  SS('quiz_state','done');SR('quiz_data');SR('quiz_answers');renderResult(r);show('v-result');
+  if(r.score>=60)confetti();user=await api(`/api/profile/${encodeURIComponent(user.email)}`)}
+  catch(e){if(e.error==='already_submitted'){SS('quiz_state','done');renderDone();show('v-done')}else alert(e.detail||e.message||'Failed')}
+}
+function renderResult(r){
+  const m=Math.floor(r.time_taken/60),s=r.time_taken%60;
+  $('v-result').innerHTML=`<div class="card res-card">
+    <div class="res-score">${r.score}%</div><div class="res-lbl">Score</div>
+    <div class="res-row"><div class="res-stat"><div class="v">${r.correct}/${r.total}</div><div class="l">Correct</div></div><div class="res-stat"><div class="v">${m>0?m+'m ':''}${s}s</div><div class="l">Time</div></div><div class="res-stat"><div class="v">${r.streak}🔥</div><div class="l">Streak</div></div></div>
+    <div class="xp-gain">+${r.xp_earned} XP</div>
+    ${r.level_up?`<div class="lvl-up">🎉 LEVEL UP → Level ${r.level}!</div>`:''}
+    ${r.new_badges.length?`<div style="margin-top:12px">${r.new_badges.map(b=>`<span class="badge-pop">${b.icon} ${b.name}</span>`).join('')}</div>`:''}
+    <div style="margin-top:10px;font-size:11px;color:var(--mut)">Base: ${r.breakdown.base} · Speed: +${r.breakdown.speed} · Perfect: +${r.breakdown.perfect} · Streak: ×${r.breakdown.streak_mult}</div>
+    <br><button class="btn btn-p" onclick="switchTab('lb')" style="width:auto;padding:9px 22px">🏆 View Leaderboard</button></div>`;
+}
+function renderDone(){$('v-done').innerHTML=`<div class="card" style="text-align:center;padding:40px"><div style="font-size:52px;margin-bottom:10px">✅</div><h2>Quest Complete!</h2><p style="color:var(--mut);margin:6px 0 16px">You've conquered today's challenge. Return tomorrow!</p><button class="btn btn-p" onclick="switchTab('lb')" style="width:auto;padding:9px 22px">🏆 View Leaderboard</button></div>`}
+
+let lbType='individual',lbPeriod='weekly';
+async function loadLB(){
+  $('v-lb').innerHTML=`<div class="card" style="padding:16px"><h2 style="margin-bottom:12px">🏆 Leaderboard</h2>
+    <div class="lb-tabs">${['individual','team'].map(t=>`<div class="lb-tab${lbType===t?' active':''}" onclick="lbType='${t}';loadLB()">${t==='individual'?'👤 Individual':'👥 Team'}</div>`).join('')}<div style="flex:1"></div>${['daily','weekly','monthly','alltime'].map(p=>`<div class="lb-tab${lbPeriod===p?' active':''}" onclick="lbPeriod='${p}';loadLB()">${p.charAt(0).toUpperCase()+p.slice(1)}</div>`).join('')}</div>
+    <div id="lbBody"><p style="color:var(--mut);text-align:center;padding:20px">Loading...</p></div></div>`;
+  try{const d=await api(`/api/leaderboard?type=${lbType}&period=${lbPeriod}`);const medals=['🥇','🥈','🥉'];
+  if(!d.length){$('lbBody').innerHTML='<div class="empty">No data yet. Be the first!</div>';return}
+  if(lbType==='team')$('lbBody').innerHTML=`<table><thead><tr><th>#</th><th>Team</th><th>Members</th><th>Avg XP</th></tr></thead><tbody>${d.map((e,i)=>`<tr><td class="rank">${medals[i]||i+1}</td><td class="pname">${e.team_name}</td><td>${e.members}</td><td class="pxp">${Math.round(e.avg_xp)}</td></tr>`).join('')}</tbody></table>`;
+  else $('lbBody').innerHTML=`<table><thead><tr><th>#</th><th>Player</th><th>XP</th><th>Lvl</th><th>🔥</th></tr></thead><tbody>${d.map((e,i)=>`<tr><td class="rank">${medals[i]||i+1}</td><td><div class="pname">${e.name}</div><div class="pemail">${e.team_name||''}</div></td><td class="pxp">${e.period_xp}</td><td>${e.level}</td><td>${e.streak}🔥</td></tr>`).join('')}</tbody></table>`}
+  catch(e){$('lbBody').innerHTML=`<div class="empty">Error loading.</div>`}
+}
+async function loadProfile(){
+  if(!user){show('v-login');return}
+  try{user=await api(`/api/profile/${encodeURIComponent(user.email)}`);
+  const all=[{key:'first_quiz',name:'First Steps',icon:'🎯',desc:'Complete first quiz'},{key:'streak_3',name:'On Fire',icon:'🔥',desc:'3-day streak'},{key:'streak_7',name:'Unstoppable',icon:'⚡',desc:'7-day streak'},{key:'streak_30',name:'Legend',icon:'👑',desc:'30-day streak'},{key:'perfect_score',name:'Perfectionist',icon:'💯',desc:'100% score'},{key:'topic_master',name:'Topic Master',icon:'🧠',desc:'5 perfects in topic'},{key:'speed_demon',name:'Speed Demon',icon:'⚡',desc:'Under 30s'},{key:'centurion',name:'Centurion',icon:'🏛️',desc:'1000 XP total'}];
+  const earned=new Set(user.badges.map(b=>b.key));const pct=xpProgress(user.xp,user.level);
+  $('v-profile').innerHTML=`<div class="card" style="text-align:center;padding:28px">
+    <div style="font-size:48px;margin-bottom:6px">👤</div><h2>${user.name}</h2><p style="color:var(--mut);font-size:13px">${user.email} · ${user.team_name||'No team'}</p>
+    <div class="dash-grid" style="margin-top:16px"><div class="dash-stat"><div class="val">${user.xp}</div><div class="lbl">XP</div></div><div class="dash-stat"><div class="val">Lv${user.level}</div><div class="lbl">Level</div></div><div class="dash-stat"><div class="val">${user.streak}🔥</div><div class="lbl">Streak</div></div></div>
+    <div style="font-size:11px;color:var(--mut);display:flex;justify-content:space-between"><span>Level ${user.level}</span><span>${user.xp}/${xpForNext(user.level)} XP</span></div>
+    <div class="xp-bar-wrap"><div class="xp-bar" style="width:${pct}%"></div></div></div>
+    <div class="card"><h3 style="margin-bottom:8px">🏅 Badges (${user.badges.length}/${all.length})</h3>
+    <div class="badge-grid">${all.map(b=>`<div class="badge${earned.has(b.key)?'':' locked'}"><span class="icon">${b.icon}</span><div><div class="bname">${b.name}</div><div class="bdesc">${b.desc}</div></div></div>`).join('')}</div></div>`}
+  catch(e){$('v-profile').innerHTML=`<div class="empty">Error.</div>`}
+}
+async function loadAdmin(){
+  $('v-admin').innerHTML=`<div class="card"><p style="color:var(--mut)">Loading...</p></div>`;
+  try{const s=await api('/api/admin/stats');
+  $('v-admin').innerHTML=`<div class="card"><h2 style="margin-bottom:14px">📊 Admin Dashboard</h2>
+    <div class="admin-stat"><div class="astat"><div class="v">${s.total_users}</div><div class="l">Users</div></div><div class="astat"><div class="v">${s.total_quizzes}</div><div class="l">Quizzes</div></div><div class="astat"><div class="v">${s.total_submissions}</div><div class="l">Submissions</div></div><div class="astat"><div class="v">${s.avg_score}%</div><div class="l">Avg Score</div></div></div>
+    ${s.teams.length?`<h3 style="margin:10px 0 8px">Team Standings</h3><table><thead><tr><th>Team</th><th>Members</th><th>Avg XP</th></tr></thead><tbody>${s.teams.map(t=>`<tr><td class="pname">${t.name}</td><td>${t.members}</td><td class="pxp">${Math.round(t.avg_xp)}</td></tr>`).join('')}</tbody></table>`:''}</div>
+    <div class="card"><h3 style="margin-bottom:12px">📚 Add Learning Content</h3>
+    <div class="fg"><label>Title</label><input id="cTitle" placeholder="e.g. AWS Lambda Best Practices"/></div>
+    <div class="fg"><label>Topic</label><input id="cTopic" placeholder="e.g. cloud computing"/></div>
+    <div class="fg"><label>URL (optional)</label><input id="cUrl" placeholder="https://..."/></div>
+    <div class="fg"><label>Or paste text</label><textarea id="cBody" rows="3" placeholder="Paste article or notes..."></textarea></div>
+    <button class="btn btn-p" onclick="addContent()">🤖 Generate Quiz from Content</button>
+    <p class="err hidden" id="contentErr"></p><p class="hidden" id="contentOk" style="color:var(--g);font-size:13px;margin-top:6px"></p></div>
+    <div class="card"><h3 style="margin-bottom:10px">➕ Add Team</h3><div style="display:flex;gap:8px"><input id="newTeam" placeholder="Team name" style="flex:1;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:var(--card2);color:var(--txt)"/><button class="btn btn-s" onclick="addTeam()">Add</button></div></div>`}
+  catch(e){$('v-admin').innerHTML=`<div class="empty">Error.</div>`}
+}
+async function addContent(){
+  const t=$('cTitle').value.trim(),tp=$('cTopic').value.trim(),u=$('cUrl').value.trim(),b=$('cBody').value.trim();
+  $('contentErr').classList.add('hidden');$('contentOk').classList.add('hidden');
+  if(!t||!tp){$('contentErr').textContent='Title and topic required.';$('contentErr').classList.remove('hidden');return}
+  if(!u&&!b){$('contentErr').textContent='Provide URL or text.';$('contentErr').classList.remove('hidden');return}
+  try{const r=await post('/api/admin/content',{title:t,topic:tp,url:u||null,body:b||null});$('contentOk').textContent=`✅ ${r.questions_generated} questions generated!`;$('contentOk').classList.remove('hidden')}
+  catch(e){$('contentErr').textContent=e.detail||'Failed.';$('contentErr').classList.remove('hidden')}
+}
+async function addTeam(){const n=$('newTeam').value.trim();if(!n)return;try{await post('/api/admin/teams',{name:n});$('newTeam').value='';loadAdmin();await loadTeams()}catch(e){alert(e.detail||'Failed')}}
+
+(async function init(){
+  await loadTeams();const e=S('user_email');
+  if(e){try{user=await api(`/api/profile/${encodeURIComponent(e)}`);const qs=S('quiz_state');
+  if(qs==='done'){renderDone();show('v-done')}else if(qs==='active'){const qd=JSON.parse(S('quiz_data')||'null');if(qd){quiz=qd;renderQuiz(true);show('v-quiz')}else{renderDash();show('v-dash')}}else{renderDash();show('v-dash')}}catch(x){renderLogin();show('v-login')}}
+  else{renderLogin();show('v-login')}
+})();
+</script>
