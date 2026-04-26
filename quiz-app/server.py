@@ -157,7 +157,38 @@ def submit_quiz():
 
 @app.get("/api/leaderboard")
 def leaderboard():
-    return jsonify(get_leaderboard())
+    period = request.args.get("period", "all")
+    if period == "all":
+        return jsonify(get_leaderboard())
+
+    from datetime import timedelta
+    today = datetime.now(timezone.utc).date()
+    if period == "daily":
+        days = 0
+    elif period == "weekly":
+        days = 6
+    else:  # monthly
+        days = 29
+
+    # Aggregate results across date range
+    scores = {}
+    for d in range(days + 1):
+        date = (today - timedelta(days=d)).isoformat()
+        for r in read_json(results_path(date), []):
+            e = scores.get(r["email"])
+            if e:
+                e["totalCorrect"] += r["correct"]
+                e["totalQuestions"] += r["total"]
+                e["quizzesTaken"] += 1
+                e["name"] = r["name"]
+            else:
+                scores[r["email"]] = {"name": r["name"], "email": r["email"], "totalCorrect": r["correct"], "totalQuestions": r["total"], "quizzesTaken": 1}
+    lb = []
+    for e in scores.values():
+        e["avgScore"] = round((e["totalCorrect"] / e["totalQuestions"]) * 100)
+        lb.append(e)
+    lb.sort(key=lambda e: (-e["avgScore"], -e["totalCorrect"]))
+    return jsonify(lb)
 
 @app.get("/api/results/<date>")
 def results(date):
